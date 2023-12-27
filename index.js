@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import UserRouter from "./router/userRouter.js";
 import cron from "node-cron";
+import seedDatabase from "./seeder/seeder.js";
 const app = express();
 
 // parse application/json
@@ -20,6 +21,7 @@ mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 20000, // 20 seconds
   })
   .then(() => {
     console.log("Connected to MongoDB!");
@@ -27,6 +29,10 @@ mongoose
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err.message);
   });
+
+setTimeout(function () {
+  seedDatabase();
+}, 3000);
 
 // cron.schedule("* * * * * *", () => {
 //   console.log("running every second 1, 2, 4 and 5");
